@@ -14,12 +14,12 @@ const onClickAdd = () => {
   <div class="grid grid-cols-4 gap-5">
     <Card
       v-for="item in items"
-      v-key="item.id"
+      :key="item.id"
       :price="item.price"
       :image-url="item.imageUrl"
       :title="item.title"
-      :is-added-to-cart="true"
-      :is-favorite="true"
+      :is-added-to-cart="item.is_added_to_cart"
+      :is-favorite="item.is_favorite"
       :onClickAdd="onClickAdd"
     />
   </div>

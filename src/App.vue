@@ -1,13 +1,40 @@
 <script setup>
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue'
 
 import Header from './components/Header.vue'
 import CardList from './components/CardList.vue'
+import AppHeader from './components/AppHeader.vue'
+
 // import Drawer from './components/Drawer.vue'
 
-onMounted(() => {
-  console.log('App mounted!')
-})
+const items = ref([])
+const sortOrder = ref('no_sort')
+const search = ref('')
+
+const fetchSneakers = async () => {
+  try {
+    const response = await fetch(
+      `http://127.0.0.1:8000/api/v1/sneakers?title=${search.value}&sortOrder=${sortOrder.value}`,
+    )
+    const data = await response.json()
+
+    items.value = data
+  } catch (error) {
+    console.error('Something went wrong', error)
+  }
+}
+
+onMounted(fetchSneakers)
+
+const handleSortChange = newSortOrder => {
+  sortOrder.value = newSortOrder
+  fetchSneakers()
+}
+
+const handleSearch = searchValue => {
+  search.value = searchValue.toLowerCase().trim()
+  fetchSneakers()
+}
 </script>
 
 <template>
@@ -16,34 +43,7 @@ onMounted(() => {
     <Header />
 
     <div class="p-10">
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-3xl font-bold">All Shoes</h2>
-
-        <div class="flex gap-4">
-          <select
-            name=""
-            id=""
-            class="p-4 border border-slate-200 rounded-xl outline-green-600"
-          >
-            <option value="">From cheapest to most expensive</option>
-            <option value="">From most expenive to cheapest</option>
-          </select>
-
-          <div class="relative">
-            <img
-              src="/search.svg"
-              alt="search icon"
-              class="absolute left-3.5 top-4 w-6 h-6"
-            />
-
-            <input
-              type="text"
-              class="border border-slate-200 rounded-xl p-4 pl-12 outline-green-600 duration-300"
-              placeholder="Search ..."
-            />
-          </div>
-        </div>
-      </div>
+      <AppHeader @sortChange="handleSortChange" @search="handleSearch" />
 
       <CardList :items="items" />
     </div>
