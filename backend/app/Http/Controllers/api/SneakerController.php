@@ -29,4 +29,25 @@ class SneakerController extends Controller
 
         return response()->json($sneakers, 200);
     }
+
+    public function favorites()
+    {
+        $sneakers = Sneaker::where('is_favorite', true)->get();
+
+        return response()->json($sneakers, 200);
+    }
+
+    public function addToFavorites($id)
+    {
+        $sneaker = Sneaker::find($id);
+
+        if (!$sneaker) {
+            return response()->json(['message' => 'Sneaker not found'], 404);
+        }
+
+        $sneaker->is_favorite = !$sneaker->is_favorite;
+        $sneaker->save();
+
+        return response()->json(['message' => "Added to favorites!"], 200);
+    }
 }

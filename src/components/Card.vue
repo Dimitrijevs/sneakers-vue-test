@@ -1,7 +1,9 @@
 <script setup>
 import EuroSign from './EuroSign.vue'
+import { inject } from 'vue'
 
-defineProps({
+const props = defineProps({
+  id: Number,
   imageUrl: String,
   title: String,
   price: Number,
@@ -10,6 +12,12 @@ defineProps({
   onClickAdd: Function,
   onClickFavorite: Function,
 })
+
+const addToFavorites = inject('addToFavorites')
+
+const onClickFavorite = () => {
+  addToFavorites(props.id)
+}
 </script>
 
 <template>

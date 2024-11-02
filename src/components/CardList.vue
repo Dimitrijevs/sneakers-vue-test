@@ -15,6 +15,7 @@ const onClickAdd = () => {
     <Card
       v-for="item in items"
       :key="item.id"
+      :id="item.id"
       :price="item.price"
       :image-url="item.imageUrl"
       :title="item.title"

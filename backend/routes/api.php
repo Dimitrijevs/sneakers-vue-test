@@ -9,3 +9,7 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::get('/sneakers', [SneakerController::class, 'index']);
+
+Route::get('/favorites', [SneakerController::class, 'favorites']);
+
+Route::post('/favorites/{id}', [SneakerController::class, 'addToFavorites']);
