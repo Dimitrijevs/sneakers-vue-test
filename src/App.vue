@@ -1,7 +1,13 @@
 <script setup>
+import { onMounted } from 'vue';
+
 import Header from './components/Header.vue'
 import CardList from './components/CardList.vue'
 // import Drawer from './components/Drawer.vue'
+
+onMounted(() => {
+  console.log('App mounted!')
+})
 </script>
 
 <template>
@@ -39,7 +45,7 @@ import CardList from './components/CardList.vue'
         </div>
       </div>
 
-      <CardList />
+      <CardList :items="items" />
     </div>
   </div>
 </template>
