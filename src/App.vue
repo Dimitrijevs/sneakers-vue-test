@@ -5,15 +5,25 @@ import Header from './components/Header.vue'
 import CardList from './components/CardList.vue'
 import AppHeader from './components/AppHeader.vue'
 import FavoritesHeader from './components/FavoritesHeader.vue'
-
-// import Drawer from './components/Drawer.vue'
+import Drawer from './components/Drawer.vue'
 
 const items = ref([])
+
 const sortOrder = ref('no_sort')
 const search = ref('')
 
-const viewFavorites = ref(false)
 const favorites = ref([])
+const viewFavorites = ref(false)
+
+const cart = ref([])
+const totalCost = ref(0)
+
+const openDrawer = ref(false)
+
+const handleOpenDrawer = () => {
+  openDrawer.value = !openDrawer.value
+  fetchCart()
+}
 
 const fetchSneakers = async () => {
   try {
@@ -39,7 +49,20 @@ const fetchFavorites = async () => {
   }
 }
 
+const fetchCart = async () => {
+  try {
+    const response = await fetch('http://127.0.0.1:8000/api/v1/cart')
+    const data = await response.json()
+
+    cart.value = data
+    handleTotalPrice()
+  } catch (e) {
+    console.error('Something went wrong', e)
+  }
+}
+
 onMounted(fetchSneakers)
+onMounted(fetchCart)
 
 const handleSortChange = newSortOrder => {
   sortOrder.value = newSortOrder
@@ -54,6 +77,13 @@ const handleSearch = searchValue => {
 const handleFavoritesClick = () => {
   viewFavorites.value = !viewFavorites.value
   fetchFavorites()
+}
+
+const handleTotalPrice = () => {
+  totalCost.value = 0
+  cart.value.forEach(cartItem => {
+    totalCost.value += cartItem.price
+  })
 }
 
 const addToFavorites = async id => {
@@ -80,13 +110,51 @@ const addToFavorites = async id => {
   }
 }
 
+const addToCart = async id => {
+  try {
+    items.value = items.value.map(item => {
+      if (item.id === id) {
+        return {
+          ...item,
+          is_added_to_cart: !item.is_added_to_cart,
+        }
+      }
+
+      return item
+    })
+
+    try {
+      await fetch(`http://127.0.0.1:8000/api/v1/cart/${id}`, {
+        method: 'POST',
+        credentials: 'include',
+      })
+    } catch (e) {
+      console.error('Something went wrong', e)
+    }
+
+    fetchCart()
+  } catch (e) {
+    console.error('Something went wrong', e)
+  }
+}
+
 provide('addToFavorites', addToFavorites)
+provide('handleOpenDrawer', handleOpenDrawer)
+provide('cart', cart)
+provide('addToCart', addToCart)
+provide('totalCost', totalCost)
 </script>
 
 <template>
-  <!-- <Drawer /> -->
+  <Drawer v-if="openDrawer" />
+
   <div class="w-4/5 mx-auto bg-white rounded-xl shadow-xl mt-16">
-    <Header @favoritesClick="handleFavoritesClick" :click="viewFavorites" />
+    <Header
+      @favoritesClick="handleFavoritesClick"
+      :click="viewFavorites"
+      :handleOpenDrawer="handleOpenDrawer"
+      :totalCost="totalCost"
+    />
 
     <div class="p-10">
       <FavoritesHeader v-if="viewFavorites" />

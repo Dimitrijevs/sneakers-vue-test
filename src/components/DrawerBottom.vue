@@ -1,5 +1,12 @@
 <script setup>
+import { inject } from 'vue'
 import EuroSign from './EuroSign.vue'
+
+const totalCost = inject('totalCost')
+
+const handleTax = () => {
+  return (totalCost.value * 1.21).toFixed(2)
+}
 </script>
 
 <template>
@@ -7,13 +14,19 @@ import EuroSign from './EuroSign.vue'
     <div class="flex gap-4">
       <span>Together:</span>
       <div class="flex-1 border-b-4 border-dashed"></div>
-      <span class="font-bold">384 <EuroSign /></span>
+      <span class="font-bold">{{ totalCost }} <EuroSign /></span>
     </div>
 
-    <div class="flex gap-4 mb-2">
+    <div class="flex gap-4">
       <span>Tax:</span>
       <div class="flex-1 border-b-4 border-dashed"></div>
       <span class="font-bold">21%</span>
+    </div>
+
+    <div class="flex gap-4 mb-12">
+      <span>Total:</span>
+      <div class="flex-1 border-b-4 border-dashed"></div>
+      <span class="font-bold">{{ handleTax() }}</span>
     </div>
 
     <button

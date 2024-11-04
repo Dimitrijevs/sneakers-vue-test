@@ -1,13 +1,11 @@
 <script setup>
+import Card from './Card.vue'
+
+import { defineProps } from 'vue'
+
 defineProps({
   items: Array,
 })
-
-import Card from './Card.vue'
-
-const onClickAdd = () => {
-  alert('Add to cart')
-}
 </script>
 
 <template>
@@ -21,7 +19,6 @@ const onClickAdd = () => {
       :title="item.title"
       :is-added-to-cart="item.is_added_to_cart"
       :is-favorite="item.is_favorite"
-      :onClickAdd="onClickAdd"
     />
   </div>
 </template>

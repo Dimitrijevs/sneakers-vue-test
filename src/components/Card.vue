@@ -9,14 +9,17 @@ const props = defineProps({
   price: Number,
   isFavorite: Boolean,
   isAddedToCart: Boolean,
-  onClickAdd: Function,
-  onClickFavorite: Function,
 })
 
 const addToFavorites = inject('addToFavorites')
+const addToCart = inject('addToCart')
 
 const onClickFavorite = () => {
   addToFavorites(props.id)
+}
+
+const onClickCart = () => {
+  addToCart(props.id)
 }
 </script>
 
@@ -39,7 +42,7 @@ const onClickFavorite = () => {
         <p>{{ price }} <EuroSign /></p>
       </div>
       <img
-        @click="onClickAdd"
+        @click="onClickCart"
         :src="isAddedToCart ? '/checked.svg' : '/plus.svg'"
         alt="plus"
       />

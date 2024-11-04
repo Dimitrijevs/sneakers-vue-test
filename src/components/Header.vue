@@ -1,8 +1,12 @@
 <script setup>
+import EuroSign from './EuroSign.vue'
+
 import { defineEmits } from 'vue'
 
 defineProps({
   click: Boolean,
+  handleOpenDrawer: Function,
+  totalCost: Number,
 })
 
 const emit = defineEmits(['favoritesClick'])
@@ -24,9 +28,12 @@ function handleFavoritesClick() {
     </div>
 
     <ul class="flex items-center gap-10">
-      <li class="flex items-center cursor-pointer gap-2 text-gray-500 group">
+      <li
+        class="flex items-center cursor-pointer gap-2 text-gray-500 group"
+        @click="handleOpenDrawer"
+      >
         <img src="/cart.svg" alt="" />
-        <b class="group-hover:text-black">Total price</b>
+        <b class="group-hover:text-black">{{ totalCost }} <EuroSign /></b>
       </li>
 
       <li class="cursor-pointer group">

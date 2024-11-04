@@ -50,4 +50,25 @@ class SneakerController extends Controller
 
         return response()->json(['message' => "Added to favorites!"], 200);
     }
+
+    public function cart()
+    {
+        $sneakers = Sneaker::where('is_added_to_cart', true)->get();
+
+        return response()->json($sneakers, 200);
+    }
+
+    public function addToCart($id)
+    {
+        $sneaker = Sneaker::find($id);
+
+        if (!$sneaker) {
+            return response()->json(['message' => 'Sneaker not found'], 404);
+        }
+
+        $sneaker->is_added_to_cart = !$sneaker->is_added_to_cart;
+        $sneaker->save();
+
+        return response()->json(['message' => "Added to cart!"], 200);
+    }
 }
