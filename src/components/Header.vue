@@ -1,4 +1,5 @@
 <script setup>
+import { RouterLink } from 'vue-router'
 import EuroSign from './EuroSign.vue'
 
 import { defineEmits } from 'vue'
@@ -19,12 +20,14 @@ function handleFavoritesClick() {
 
 <template>
   <header class="flex justify-between border-b border-slate-300 p-8">
-    <div class="flex gap-3 items-center">
-      <img src="/logo.png" alt="Logo" class="w-10" />
-      <div class="">
-        <h2 class="text-xl font-bold uppercase">Vue Sneakers</h2>
-        <p class="text-slate-500">Shop of the best sneakers</p>
-      </div>
+    <div>
+      <router-link to="/" class="flex gap-3 items-center">
+        <img src="/logo.png" alt="Logo" class="w-10" />
+        <div class="">
+          <h2 class="text-xl font-bold uppercase">Vue Sneakers</h2>
+          <p class="text-slate-500">Shop of the best sneakers</p>
+        </div>
+      </router-link>
     </div>
 
     <ul class="flex items-center gap-10">
@@ -37,18 +40,25 @@ function handleFavoritesClick() {
       </li>
 
       <li class="cursor-pointer group">
-        <button
-          @click="handleFavoritesClick"
-          class="flex items-center gap-2 text-gray-500 group"
-        >
-          <img :src="click ? 'like-2.svg' : '/heart.svg'" alt="" />
-          <span class="group-hover:text-black">Favorites</span>
-        </button>
+        <router-link to="/">
+          <button
+            @click="handleFavoritesClick"
+            class="flex items-center gap-2 text-gray-500 group"
+          >
+            <img :src="click ? 'like-2.svg' : '/heart.svg'" alt="" />
+            <span class="group-hover:text-black">Favorites</span>
+          </button>
+        </router-link>
       </li>
 
-      <li class="flex items-center cursor-pointer gap-2 text-gray-500 group">
-        <img src="/profile.svg" alt="" />
-        <span class="group-hover:text-black">Profile</span>
+      <li>
+        <RouterLink
+          to="/purchases"
+          class="flex items-center cursor-pointer gap-2 text-gray-500 group"
+        >
+          <img src="/profile.svg" alt="" />
+          <span class="group-hover:text-black">Purchases</span>
+        </RouterLink>
       </li>
     </ul>
   </header>

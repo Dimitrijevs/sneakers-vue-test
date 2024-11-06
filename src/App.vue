@@ -1,27 +1,25 @@
 <script setup>
-import { onMounted, ref, provide } from 'vue'
-
+import { provide, onMounted, ref } from 'vue'
 import Header from './components/Header.vue'
-import CardList from './components/CardList.vue'
-import AppHeader from './components/AppHeader.vue'
-import FavoritesHeader from './components/FavoritesHeader.vue'
+
 import Drawer from './components/Drawer.vue'
+
+const openDrawer = ref(false)
 
 const items = ref([])
 
 const sortOrder = ref('no_sort')
 const search = ref('')
 
+const isPurchaseLoading = ref(false)
+const isPurchaseFinished = ref(false)
+const lastPurchaseId = ref(null)
+
 const favorites = ref([])
 const viewFavorites = ref(false)
 
 const cart = ref([])
 const totalCost = ref(0)
-const isPurchaseLoading = ref(false)
-const isPurchaseFinished = ref(false)
-const lastPurchaseId = ref(null)
-
-const openDrawer = ref(false)
 
 const handleOpenDrawer = () => {
   openDrawer.value = !openDrawer.value
@@ -52,18 +50,6 @@ const fetchFavorites = async () => {
     favorites.value = data
   } catch (error) {
     console.error('Something went wrong', error)
-  }
-}
-
-const fetchCart = async () => {
-  try {
-    const response = await fetch('http://127.0.0.1:8000/api/v1/cart')
-    const data = await response.json()
-
-    cart.value = data
-    handleTotalPrice()
-  } catch (e) {
-    console.error('Something went wrong', e)
   }
 }
 
@@ -103,9 +89,6 @@ const handlePurchase = async () => {
   }
 }
 
-onMounted(fetchSneakers)
-onMounted(fetchCart)
-
 const handleSortChange = newSortOrder => {
   sortOrder.value = newSortOrder
   fetchSneakers()
@@ -119,13 +102,6 @@ const handleSearch = searchValue => {
 const handleFavoritesClick = () => {
   viewFavorites.value = !viewFavorites.value
   fetchFavorites()
-}
-
-const handleTotalPrice = () => {
-  totalCost.value = 0
-  cart.value.forEach(cartItem => {
-    totalCost.value += cartItem.price
-  })
 }
 
 const addToFavorites = async id => {
@@ -182,21 +158,54 @@ const addToCart = async id => {
   }
 }
 
-provide('addToFavorites', addToFavorites)
+const fetchCart = async () => {
+  try {
+    const response = await fetch('http://127.0.0.1:8000/api/v1/cart')
+    const data = await response.json()
+
+    cart.value = data
+    handleTotalPrice()
+  } catch (e) {
+    console.error('Something went wrong', e)
+  }
+}
+
+const handleTotalPrice = () => {
+  totalCost.value = 0
+  cart.value.forEach(cartItem => {
+    totalCost.value += cartItem.price
+  })
+}
+
+onMounted(fetchCart)
+onMounted(fetchSneakers)
+
 provide('handleOpenDrawer', handleOpenDrawer)
-provide('cart', cart)
-provide('addToCart', addToCart)
 provide('totalCost', totalCost)
+provide('cart', cart)
+provide('handleOpenDrawer', handleOpenDrawer)
+provide('openDrawer', openDrawer)
+provide('fetchCart', fetchCart)
+provide('addToFavorites', addToFavorites)
+provide('addToCart', addToCart)
 provide('handlePurchase', handlePurchase)
 provide('isPurchaseLoading', isPurchaseLoading)
 provide('isPurchaseFinished', isPurchaseFinished)
 provide('lastPurchaseId', lastPurchaseId)
+provide('items', items)
+provide('favorites', favorites)
+provide('viewFavorites', viewFavorites)
+provide('handleSortChange', handleSortChange)
+provide('handleSearch', handleSearch)
+provide('fetchSneakers', fetchSneakers)
+provide('fetchFavorites', fetchFavorites)
+provide('handleFavoritesClick', handleFavoritesClick)
 </script>
 
 <template>
   <Drawer v-if="openDrawer" />
 
-  <div class="w-4/5 mx-auto bg-white rounded-xl shadow-xl mt-16">
+  <div class="w-4/5 mx-auto bg-white rounded-xl shadow-xl mt-16 pb-1 mb-16">
     <Header
       @favoritesClick="handleFavoritesClick"
       :click="viewFavorites"
@@ -204,17 +213,7 @@ provide('lastPurchaseId', lastPurchaseId)
       :totalCost="totalCost"
     />
 
-    <div class="p-10">
-      <FavoritesHeader v-if="viewFavorites" />
-
-      <AppHeader
-        v-if="!viewFavorites"
-        @sortChange="handleSortChange"
-        @search="handleSearch"
-      />
-
-      <CardList :items="viewFavorites ? favorites : items" />
-    </div>
+    <router-view></router-view>
   </div>
 </template>
 

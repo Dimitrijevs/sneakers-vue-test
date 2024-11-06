@@ -2,6 +2,7 @@
 import { inject } from 'vue'
 
 const lastPurchaseId = inject('lastPurchaseId')
+const handleOpenDrawer = inject('handleOpenDrawer')
 </script>
 
 <template>

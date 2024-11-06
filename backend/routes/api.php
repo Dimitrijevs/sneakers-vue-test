@@ -21,3 +21,5 @@ Route::get('/cart', [SneakerController::class, 'cart']);
 Route::post('/cart/{id}', [SneakerController::class, 'addToCart']);
 
 Route::post('/purchase', [SneakerController::class, 'purchase']);
+
+Route::get('/purchases', [SneakerController::class, 'purchases']);

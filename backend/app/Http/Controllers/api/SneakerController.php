@@ -103,4 +103,11 @@ class SneakerController extends Controller
             'sneakers' => $sneakers,
         ], 200);
     }
+
+    public function purchases()
+    {
+        $purchases = Purchase::all();
+
+        return response()->json($purchases, 200);
+    }
 }
