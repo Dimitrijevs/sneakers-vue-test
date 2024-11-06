@@ -3,6 +3,8 @@ import { inject } from 'vue'
 import EuroSign from './EuroSign.vue'
 
 const totalCost = inject('totalCost')
+const handlePurchase = inject('handlePurchase')
+const isPurchaseLoading = inject('isPurchaseLoading')
 
 const handleTax = () => {
   return (totalCost.value * 1.21).toFixed(2)
@@ -30,9 +32,11 @@ const handleTax = () => {
     </div>
 
     <button
+      :disabled="!totalCost"
+      @click="handlePurchase"
       class="bg-green-600 text-white p-3 disabled:bg-slate-500 disabled:text-white rounded-xl cursor-pointer hover:bg-green-500 active:bg-green-400 active:text-white hover:text-black duration-300"
     >
-      Get order
+      {{ isPurchaseLoading ? 'Loading' : 'Get order' }}
     </button>
   </div>
 </template>

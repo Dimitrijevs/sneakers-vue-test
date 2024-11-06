@@ -1,9 +1,14 @@
 <script setup>
-import { defineProps } from 'vue'
+import { defineProps, inject } from 'vue'
 
 import CartItemList from './CartItemList.vue'
 import DrawerHead from './DrawerHead.vue'
 import DrawerBottom from './DrawerBottom.vue'
+import InfoBlock from './InfoBlock.vue'
+import PurchaseFinihsed from './PurchaseFinihsed.vue'
+
+const totalCost = inject('totalCost')
+const isPurchaseFinished = inject('isPurchaseFinished')
 
 defineProps({
   handleOpenDrawer: Function,
@@ -17,9 +22,13 @@ defineProps({
     <DrawerHead />
 
     <div class="flex-1 overflow-y-auto mb-4">
-      <CartItemList />
+      <CartItemList v-if="totalCost" />
+
+      <PurchaseFinihsed v-if="!totalCost && isPurchaseFinished" />
+
+      <InfoBlock v-if="!totalCost" />
     </div>
 
-    <DrawerBottom />
+    <DrawerBottom v-if="totalCost" />
   </div>
 </template>

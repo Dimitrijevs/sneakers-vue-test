@@ -19,3 +19,5 @@ Route::post('/favorites/{id}', [SneakerController::class, 'addToFavorites']);
 Route::get('/cart', [SneakerController::class, 'cart']);
 
 Route::post('/cart/{id}', [SneakerController::class, 'addToCart']);
+
+Route::post('/purchase', [SneakerController::class, 'purchase']);

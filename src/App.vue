@@ -17,12 +17,18 @@ const viewFavorites = ref(false)
 
 const cart = ref([])
 const totalCost = ref(0)
+const isPurchaseLoading = ref(false)
+const isPurchaseFinished = ref(false)
+const lastPurchaseId = ref(null)
 
 const openDrawer = ref(false)
 
 const handleOpenDrawer = () => {
   openDrawer.value = !openDrawer.value
-  fetchCart()
+
+  if (openDrawer.value) {
+    fetchCart()
+  }
 }
 
 const fetchSneakers = async () => {
@@ -58,6 +64,42 @@ const fetchCart = async () => {
     handleTotalPrice()
   } catch (e) {
     console.error('Something went wrong', e)
+  }
+}
+
+const handlePurchase = async () => {
+  isPurchaseLoading.value = true
+  const total_price = totalCost.value * 1.21
+  const sneakers_ids = cart.value.map(cartItem => cartItem.id)
+
+  console.log(total_price, sneakers_ids)
+
+  try {
+    const response = await fetch('http://localhost:8000/api/v1/purchase', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ total_price, sneakers_ids }),
+    })
+
+    const data = await response.json()
+
+    items.value = data.sneakers
+    lastPurchaseId.value = data.purchase_id
+
+    cart.value = []
+    totalCost.value = 0
+  } catch (e) {
+    console.error('Something went wrong', e)
+  } finally {
+    isPurchaseLoading.value = false
+    isPurchaseFinished.value = true
+
+    setTimeout(() => {
+      isPurchaseFinished.value = false
+      lastPurchaseId.value = null
+    }, 10 * 1000)
   }
 }
 
@@ -135,6 +177,8 @@ const addToCart = async id => {
     fetchCart()
   } catch (e) {
     console.error('Something went wrong', e)
+  } finally {
+    isPurchaseFinished.value = false
   }
 }
 
@@ -143,6 +187,10 @@ provide('handleOpenDrawer', handleOpenDrawer)
 provide('cart', cart)
 provide('addToCart', addToCart)
 provide('totalCost', totalCost)
+provide('handlePurchase', handlePurchase)
+provide('isPurchaseLoading', isPurchaseLoading)
+provide('isPurchaseFinished', isPurchaseFinished)
+provide('lastPurchaseId', lastPurchaseId)
 </script>
 
 <template>
